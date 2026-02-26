@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --pearl-white: #FDFCFB;
-            --ocean-deep: #0A192F;
+            /* オーストラリアの真珠が育つ海を連想させるディープオーシャンブルー */
+            --ocean-deep: #004B63;
             --gold-accent: #C5A059;
             --text-main: #1A1A1A;
         }
@@ -25,29 +29,48 @@
             scroll-behavior: smooth;
         }
 
-        .serif-en { font-family: 'Playfair Display', serif; }
-        
+        .serif-en {
+            font-family: 'Playfair Display', serif;
+        }
+
         .fade-in {
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        
+
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
         .hero-gradient {
-            background: linear-gradient(rgba(10, 25, 47, 0.5), rgba(10, 25, 47, 0.5)), 
-                        url('top_v.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(10, 25, 47, 0.5), rgba(10, 25, 47, 0.5)),
+                url('top_v.jpg') center/cover no-repeat;
         }
 
-        .section-padding { padding: 100px 24px; }
+        .section-padding {
+            padding: 60px 16px;
+        }
 
-        .brand-card { cursor: pointer; transition: all 0.5s ease; }
-        .brand-card:hover .brand-image { transform: scale(1.05); }
-        .brand-image { transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        @media (min-width: 768px) {
+            .section-padding {
+                padding: 100px 24px;
+            }
+        }
+
+        .brand-card {
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .brand-card:hover .brand-image {
+            transform: scale(1.05);
+        }
+
+        .brand-image {
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
 
         .signature {
             font-family: 'Playfair Display', serif;
@@ -55,8 +78,16 @@
             border-bottom: 1px solid var(--gold-accent);
         }
 
-        .page { display: none; opacity: 0; transition: opacity 0.6s ease; }
-        .page.active { display: block; opacity: 1; }
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
 
         .brand-detail-header {
             height: 60vh;
@@ -72,216 +103,419 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
         }
 
-        .history-list dt {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold-accent);
-            font-weight: 600;
+        /* カルーセルスタイル */
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--pearl-white); }
-        ::-webkit-scrollbar-thumb { background: var(--gold-accent); }
-        .aspect-4-3 { aspect-ratio: 4 / 3; }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-item {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            padding: 20px;
+        }
+
+        @media (min-width: 640px) {
+            .carousel-item {
+                flex: 0 0 50%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .carousel-item {
+                flex: 0 0 25%;
+            }
+        }
+
+        .best-seller-img {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--pearl-white);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-accent);
+        }
+
+        .aspect-4-3 {
+            aspect-ratio: 4 / 3;
+        }
+
+        /* 商品グリッド（MODA） */
+        .product-grid-item img {
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .product-grid-item:hover img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
+
 <body>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-[100] px-8 py-6 flex justify-between items-center mix-blend-difference text-white">
-        <div class="text-xl font-semibold tracking-widest serif-en uppercase cursor-pointer" onclick="showPage('home')">Hinata Autore Project</div>
+    <nav
+        class="fixed w-full z-[100] px-4 md:px-8 py-4 md:py-6 flex justify-between items-center mix-blend-difference text-white">
+        <div class="text-xl font-semibold tracking-widest serif-en uppercase cursor-pointer" onclick="showPage('home')">
+            Hinata Autore Project</div>
         <div class="hidden md:flex space-x-12 text-sm tracking-widest uppercase">
-            <a href="#manifesto" class="hover:text-gold-accent transition">Manifesto</a>
-            <a href="#portfolio" class="hover:text-gold-accent transition">Portfolio</a>
-            <a href="#chairman" class="hover:text-gold-accent transition">Chairman</a>
+            <a href="#manifesto" class="hover:text-gold-accent transition" onclick="showPage('home')">Manifesto</a>
+            <a href="#portfolio" class="hover:text-gold-accent transition" onclick="showPage('home')">Portfolio</a>
         </div>
     </nav>
 
-    <!-- HOME PAGE CONTENT -->
+    <!-- 1. HOME PAGE CONTENT -->
     <div id="home" class="page active">
         <main>
-           <main>
-        <!-- 1. Hero Message -->
-        <header class="relative h-screen flex items-center justify-center overflow-hidden hero-gradient">
-            <div class="text-center text-white px-4">
-                <p class="serif-en text-lg md:text-xl tracking-[0.3em] mb-6 opacity-90">Guardians of the Living Legacy.</p>
-                <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-8 tracking-wider">
-                    生命の遺産、その守護者として
-                </h1>
-                <div class="max-w-2xl mx-auto text-sm md:text-base opacity-80 font-light leading-loose">
-                    オーストラリアの清らかな海から、世界の最高級ブティックへ。<br>
-                    1991年の創業以来、ロザリオ・オートレ氏が築き上げた「卓越した伝統と信頼」を、<br>
-                    我々は日本市場において正しく継承し、守り抜くことを誓います。
-                </div>
-            </div>
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-                <div class="w-[1px] h-12 bg-white opacity-50"></div>
-            </div>
-        </header>
-
-        <!-- 1.2 The Core Philosophy -->
-        <section id="manifesto" class="section-padding max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="order-2 md:order-1">
-                    <img src="IMG_1462.JPG"  alt="pearl" class="w-full h-[600px] object-cover shadow-2xl">
-                </div>
-                <div class="order-1 md:order-2 space-y-8">
-                    <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">The Core Philosophy</span>
-                    <h2 class="text-3xl font-semibold">白蝶貝が織りなす、静寂の芸術</h2>
-                    <div class="space-y-6 text-gray-700">
-                        <p>真珠は、生物から生み出される唯一のジュエリーです。</p>
-                        <p>世界最大の真珠貝「白蝶貝（Pinctada Maxima）」が、2年以上の歳月をかけて育む圧倒的な真珠層。</p>
-                        <p>その圧倒的な厚みが、南洋真珠特有の深みのある「テリ（Lustre）」を生み出します。</p>
-                        <p>我々は、オートレ・グループが掲げる「ゼロ・ウェイスト」の哲学を全面的に支持し、生命の恵みを余すことなく慈しむ精神を日本で復元させます。</p>
+            <!-- 1. Hero Message -->
+            <header class="relative h-screen flex items-center justify-center overflow-hidden hero-gradient">
+                <div class="text-center text-white px-4">
+                    <p class="serif-en text-lg md:text-xl tracking-[0.3em] mb-6 opacity-90">Guardians of the Living
+                        Legacy.</p>
+                    <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-8 tracking-wider">
+                        生命の遺産、その守護者として
+                    </h1>
+                    <div class="max-w-2xl mx-auto text-sm md:text-base opacity-80 font-light leading-loose">
+                        オーストラリアの清らかな海から、世界の最高級ブティックへ。<br>
+                        1991年の創業以来, ロザリオ・オートレ氏が築き上げた「卓越した伝統と信頼」を、<br>
+                        我々は日本市場において正しく継承し、守り抜くことを誓います。
                     </div>
                 </div>
-            </div>
-        </section>
+                <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                    <div class="w-[1px] h-12 bg-white opacity-50"></div>
+                </div>
+            </header>
 
-        <!-- 1.3 Professional Stewardship -->
-        <section class="bg-[#0A192F] text-white section-padding">
-            <div class="max-w-5xl mx-auto text-center space-y-12">
-                <h2 class="text-2xl md:text-3xl font-semibold tracking-widest">日本における私たちの約束</h2>
-                <div class="grid md:grid-cols-2 gap-12 text-left">
-                    <div class="border-l border-gold-accent pl-8 py-4">
-                        <h3 class="serif-en text-xl mb-4">Vertical Integration</h3>
-                        <p class="text-sm opacity-80 leading-relaxed">
-                            オートレ・グループの最大の強みである「完全なる垂直統合」を支持します。
-                        </p>
+            <!-- 1.2 The Core Philosophy -->
+            <section id="manifesto" class="section-padding max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+                    <div class="order-2 md:order-1">
+                        <img src="IMG_1462.JPG" alt="pearl"
+                            class="w-full h-[400px] md:h-[600px] object-cover shadow-2xl">
                     </div>
-                    <div class="border-l border-gold-accent pl-8 py-4">
-                        <h3 class="serif-en text-xl mb-4">Ethical Stewardship</h3>
-                        <p class="text-sm opacity-80 leading-relaxed">
-                            養殖からデザイン、流通まで一貫した管理体制が生み出す「倫理的基準」と「最高品質」を、日本市場の最終責任者（Steward）として担保します。
-                        </p>
+                    <div class="order-1 md:order-2 space-y-6 md:space-y-8">
+                        <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">The Core
+                            Philosophy</span>
+                        <h2 class="text-2xl md:text-3xl font-semibold">白蝶貝が織りなす、静寂の芸術</h2>
+                        <div class="space-y-6 text-gray-700">
+                            <p>真珠は、生物から生み出される唯一のジュエリーです。</p>
+                            <p>世界最大の真珠貝「白蝶貝（Pinctada Maxima）」が、2年以上の歳月をかけて育む圧倒的な真珠層。</p>
+                            <p>その圧倒的な厚みが、南洋真珠特有の深みのある「テリ（Lustre）」を生み出します。</p>
+                            <p>我々は、オートレ・グループが掲げる「ゼロ・ウェイスト」の哲学を全面的に支持し、生命の恵みを余すことなく慈しむ精神を日本で復元させます。</p>
+                        </div>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-2 gap-8 mt-12">
-                    <div class="aspect-4-3">
-                        <img src="professional_v1.webp" alt="Professional Stewardship 1" class="w-full h-full object-cover shadow-2xl">
-                    </div>
-                    <div class="aspect-4-3">
-                        <img src="professional_v2.webp" alt="Professional Stewardship 2" class="w-full h-full object-cover shadow-2xl">
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- 2. Strategic Execution -->
-        <section id="strategy" class="section-padding bg-[#F4F1EE]">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-20">
-                    <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">Strategic Execution</span>
-                    <h2 class="text-3xl font-semibold mt-4">プロフェッショナルな守護者としての基盤</h2>
-                    <p class="mt-4 text-gray-600">AUTOREの「Ocean to Atelier」思想を日本市場で持続させる3つの運用核</p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-8">
-                    <!-- I. Integrity -->
-                    <div class="bg-white p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-                        <div class="text-gold-accent text-2xl mb-6 italic serif-en">01</div>
-                        <h3 class="text-xl font-bold mb-6">財務と運営の誠実性</h3>
-                        <ul class="space-y-4 text-sm text-gray-600">
-                            <li><strong>Sustainable Modeling:</strong> 長期持続可能な事業計画を策定。</li>
-                            <li><strong>Conceptual Precision:</strong> 高付加価値な体験を提供するための緻密な設計。</li>
-                        </ul>
-                    </div>
-
-                    <!-- II. Community -->
-                    <div class="bg-white p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-                        <div class="text-gold-accent text-2xl mb-6 italic serif-en">02</div>
-                        <h3 class="text-xl font-bold mb-6">高コンテキストな共同体形成</h3>
-                        <ul class="space-y-4 text-sm text-gray-600">
-                            <li><strong>Educational Programming:</strong> 体系的なカリキュラムによる「良質な顧客層」の育成。</li>
-                        </ul>
-                    </div>
-
-                    <!-- III. Governance -->
-                    <div class="bg-white p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
-                        <div class="text-gold-accent text-2xl mb-6 italic serif-en">03</div>
-                        <h3 class="text-xl font-bold mb-6">統制と基盤</h3>
-                        <ul class="space-y-4 text-sm text-gray-600">
-                            <li><strong>Regulatory Compliance:</strong> 正規代理店としての正当性と透明性の確保。</li>
-                            <li><strong>Managed Touchpoints:</strong> 物理的な活動拠点を厳格に管理。</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. Sustainability -->
-        <section id="sustainability" class="section-padding max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-20 items-center">
-                <div class="space-y-8">
-                    <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">Sustainability</span>
-                    <h2 class="text-3xl font-semibold">海と生命へのコミットメント</h2>
-                    <p class="text-gray-700 italic border-l-4 border-gold-accent pl-6">
-                        真珠は、健全な海洋生態系と倫理的な事業運営が調和したときにのみ生み出される「生命の芸術」です。
-                    </p>
-                    
-                    <div class="space-y-12 mt-12">
-                        <div>
-                            <h4 class="font-bold mb-3 flex items-center">
-                                <span class="w-2 h-2 bg-gold-accent rounded-full mr-3"></span>
-                                海洋保全への責任
-                            </h4>
-                            <p class="text-sm text-gray-600 pl-5">
-                                オーストラリアおよびインドネシアの美しい海岸線にある養殖場において、手つかずの海を守り抜く本国の姿勢を支持し、日本で広く啓蒙します。
+            <!-- 1.3 Professional Stewardship -->
+            <section class="bg-[var(--ocean-deep)] text-white section-padding">
+                <div class="max-w-5xl mx-auto text-center space-y-8 md:space-y-12">
+                    <h2 class="text-2xl md:text-3xl font-semibold tracking-widest">日本における私たちの約束</h2>
+                    <div class="grid md:grid-cols-2 gap-8 md:gap-12 text-left">
+                        <div class="border-l border-gold-accent pl-8 py-4">
+                            <h3 class="serif-en text-xl mb-4">Vertical Integration</h3>
+                            <p class="text-sm opacity-80 leading-relaxed">
+                                オートレ・グループの最大の強みである「完全なる垂直統合」を支持します。
                             </p>
                         </div>
+                        <div class="border-l border-gold-accent pl-8 py-4">
+                            <h3 class="serif-en text-xl mb-4">Ethical Stewardship</h3>
+                            <p class="text-sm opacity-80 leading-relaxed">
+                                養殖からデザイン、流通まで一貫した管理体制が生み出す「倫理的基準」と「最高品質」を、日本市場の最終責任者（Steward）として担保します。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 md:gap-8 mt-8 md:mt-12">
+                        <div class="aspect-4-3">
+                            <img src="professional_v1.webp" alt="Professional Stewardship 1"
+                                class="w-full h-full object-cover shadow-2xl">
+                        </div>
+                        <div class="aspect-4-3">
+                            <img src="professional_v2.webp" alt="Professional Stewardship 2"
+                                class="w-full h-full object-cover shadow-2xl">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Strategic Execution -->
+            <section id="strategy" class="section-padding bg-[#F4F1EE]">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-12 md:mb-20">
+                        <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">Our
+                            Promise</span>
+                        <h2 class="text-2xl md:text-3xl font-semibold mt-4">AUTOREの哲学を守り抜く3つの約束</h2>
+                        <p class="mt-4 text-gray-600 text-sm md:text-base">「Ocean to
+                            Atelier」の思想を持続させ、一貫したブランドの世界観を日本のお客様へ誠実にお届けします。</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+                        <div
+                            class="bg-white p-6 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="text-gold-accent text-2xl mb-4 italic serif-en">01</div>
+                            <h3 class="text-lg md:text-xl font-bold mb-4">ブランド価値の妥協なき保護</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                                短期的な利益を優先せず、AUTOREが本来持つ価値や最高品質の体験を、日本でもそのままの形で提供し続ける長期的な運営を行います。
+                            </p>
+                        </div>
+                        <div
+                            class="bg-white p-6 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="text-gold-accent text-2xl mb-4 italic serif-en">02</div>
+                            <h3 class="text-lg md:text-xl font-bold mb-4">真珠の本当の美しさを伝える</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                                ただ商品を販売するのではなく、真珠が育つ背景や職人の技術など、ブランドの奥深いストーリーを丁寧に伝え、真の価値に共感してくださるファンを育てます。
+                            </p>
+                        </div>
+                        <div
+                            class="bg-white p-6 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="text-gold-accent text-2xl mb-4 italic serif-en">03</div>
+                            <h3 class="text-lg md:text-xl font-bold mb-4">安心と信頼のお約束</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed flex-grow">
+                                日本のルールを厳格に守ることはもちろん、お客様が触れるすべての接点で本国と同じ高い基準を保ち、常に誠実で透明なブランド環境をお約束します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Autorenability -->
+            <section id="sustainability" class="section-padding max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-10 md:gap-20 items-center mb-16 md:mb-24">
+                    <div class="space-y-6 md:space-y-8">
                         <div>
-                            <h4 class="font-bold mb-3 flex items-center">
-                                <span class="w-2 h-2 bg-gold-accent rounded-full mr-3"></span>
-                                ゼロ・ウェイストの追求
-                            </h4>
-                            <p class="text-sm text-gray-600 pl-5 mb-4">「海からの恵みを無駄にしない」哲学に基づき、白蝶貝の全ての副産物を活用します。</p>
-                            <div class="grid grid-cols-2 gap-4 pl-5">
-                                <div class="bg-[#F8F7F5] p-4">
-                                    <span class="block text-xs text-gold-accent font-bold mb-1">Pearl Meat</span>
-                                    <span class="text-xs">高級食材としての提供</span>
+                            <span
+                                class="text-gold-accent tracking-widest uppercase text-base font-bold">AUTORENABILITY</span>
+                            <span class="block text-[10px] tracking-[0.4em] text-gray-400 mt-1 uppercase">Autore +
+                                Sustainability</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-semibold">海と生命へのコミットメント</h2>
+                        <p class="text-gray-700 italic border-l-4 border-gold-accent pl-6">
+                            真珠は、健全な海洋生態系と倫理的な事業運営が調和したときにのみ生み出される「生命の芸術」です。
+                        </p>
+                        <div class="space-y-8 md:space-y-12 mt-8 md:mt-12">
+                            <div>
+                                <h4 class="font-bold mb-3 flex items-center">
+                                    <span class="w-2 h-2 bg-gold-accent rounded-full mr-3"></span>
+                                    海洋保全への責任
+                                </h4>
+                                <p class="text-sm text-gray-600 pl-5">
+                                    オーストラリアおよびインドネシアの美しい海岸線にある養殖場において, 手つかずの海を守り抜く本国の姿勢を支持し, 日本で広く啓蒙します。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-3 flex items-center">
+                                    <span class="w-2 h-2 bg-gold-accent rounded-full mr-3"></span>
+                                    ゼロ・ウェイストの追求
+                                </h4>
+                                <p class="text-sm text-gray-600 pl-5 mb-4">「海からの恵みを無駄にしない」哲学に基づき、白蝶貝の全ての副産物を活用します。</p>
+                                <div class="grid grid-cols-2 gap-4 pl-5">
+                                    <div class="bg-[#F8F7F5] p-4">
+                                        <span class="block text-xs text-gold-accent font-bold mb-1">Pearl Meat</span>
+                                        <span class="text-xs">高級食材としての提供</span>
+                                    </div>
+                                    <div class="bg-[#F8F7F5] p-4">
+                                        <span class="block text-xs text-gold-accent font-bold mb-1">Mother of
+                                            Pearl</span>
+                                        <span class="text-xs">高級工芸品への素材利用</span>
+                                    </div>
                                 </div>
-                                <div class="bg-[#F8F7F5] p-4">
-                                    <span class="block text-xs text-gold-accent font-bold mb-1">Mother of Pearl</span>
-                                    <span class="text-xs">高級工芸品への素材利用</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <img src="autorenability.webp" alt="アトリエでの緻密な職人技"
+                            class="w-full h-[300px] md:h-[500px] object-cover">
+                    </div>
+                </div>
+
+                <!-- AUTORENABILITY Initiatives Carousel -->
+                <div class="border-t border-gray-100 pt-16">
+                    <div class="text-center mb-12">
+                        <h3 class="serif-en text-3xl font-semibold mb-2 text-[var(--ocean-deep)]">Autorenability
+                            Initiatives
+                        </h3>
+                        <p class="text-[10px] text-gray-400 tracking-[0.2em] uppercase">未来へ繋ぐ7つの約束</p>
+                    </div>
+
+                    <div class="relative group">
+                        <button onclick="scrollSustainabilityCarousel(-1)"
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-accent)] transition z-10 bg-white/80 rounded-full shadow-sm ml-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button onclick="scrollSustainabilityCarousel(1)"
+                            class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--gold-accent)] transition z-10 bg-white/80 rounded-full shadow-sm mr-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+
+                        <div id="sustainability-carousel" class="carousel-container pb-8">
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="1.webp" alt="意識的な農業"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ①意識的な農業</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            オートレ・グループはMSC（持続可能な漁業認証）を取得しており、真珠生産者協会（PPA）の会員です。オーストラリアでは、野生のアコヤガイの持続可能な漁獲を確保するために、養殖業者ごとに割当量が割り当てられる割当制度があり、野生に残存する貝殻の豊富さを確保することに配慮しています。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="2.webp" alt="孵化場に焦点を当てる"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ②孵化場に焦点を当てる</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            オートレ・グループは、天然漁業への割当量を使い切る必要性を最小限に抑えるため、養殖場で養殖されたアコヤガイの殻に重点を置いています。養殖場で生産されたカキには、海中に放出された殻が自然に産卵を促すため、天然カキの生産量増加を促進するという利点もあります。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="3.webp" alt="海洋保護"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ③海洋保護</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            オートレ・グループの農場は、手つかずの豊かな水が最大の財産である、人里離れた美しい場所に位置しています。農場が位置する海域では商業漁業が制限されており、海洋生物の保護と乱獲防止に役立っています。さらに、私たちが海で利用する養殖インフラは、海洋生物の成長と繁栄のための基盤を提供し、海洋動物を惹きつけています。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="4.webp" alt="サンゴ礁の再生"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ④サンゴ礁の再生</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            オートレ農場がこの清らかな海域に拠点を置く以前、私たちの養殖場の一部は違法な魚爆撃（ダイナマイト漁）の被害を受け、破壊されていました。この地域に移転して以来、私たちは破壊されたサンゴ礁の再生、サンゴやその他の生物の繁殖に継続的に投資し、資源を投入してきました。これにより、魚や海の生物の生息数が増加しています。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="5.webp" alt="地域雇用"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ⑤地域雇用</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            オートレ グループは、雇用が容易に得られない地方の地域で雇用を提供し、先住民コミュニティに追加の雇用機会を提供しています。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="6.webp" alt="教育"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ⑥教育</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            2014年、AUTOREはインドネシア・ロンボク島の真珠養殖場において、JARIとの協力関係を築き、地域社会における環境保全の重要性への意識向上を目指しています。現在も継続されているこのプログラムは、地元の小学生の真珠養殖と海洋保全に関する知識と理解を深めることを目指しています。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div
+                                    class="bg-white border border-gray-100 h-full flex flex-col group/card hover:shadow-lg transition duration-500 rounded-sm overflow-hidden">
+                                    <img src="7.webp" alt="会社の慣行"
+                                        class="w-full h-48 object-cover group-hover/card:scale-105 transition duration-700">
+                                    <div class="p-8 flex flex-col flex-grow">
+                                        <h4
+                                            class="font-bold text-[15px] mb-4 text-[var(--ocean-deep)] border-b border-gray-100 pb-3">
+                                            ⑦会社の慣行</h4>
+                                        <p class="text-[11px] text-gray-600 leading-loose flex-grow">
+                                            従業員の尊重と処遇の重要性は、当社が誇る特質の一つです。AUTOREは、事業のあらゆる分野において、従業員の健康と安全に関する高い基準を常に維持しています。AUTOREは、社内のあらゆる活動において、社会的、倫理的、そして環境的責任を維持することの重要性を誇りを持って認識しています。
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="relative group">
-                    <img src="2.webp" alt="アトリエでの緻密な職人技" class="w-full h-[500px] object-cover">
-                </div>
-            </div>
-        </section>
+            </section>
 
             <!-- 4. Brand Portfolio -->
             <section id="portfolio" class="section-padding bg-white">
-                <div class="max-w-7xl mx-auto">
-                    <div class="text-center mb-16">
-                        <h2 class="text-3xl font-semibold">Brand Portfolio Integration</h2>
-                        <p class="mt-4 text-gray-500 text-sm">画像をクリックして各ブランドの詳細をご覧ください。</p>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="brand-card relative overflow-hidden group h-[500px]" onclick="showBrandDetail('autore')">
-                            <img src="autore.png" 
-                                 class="brand-image w-full h-full object-cover grayscale group-hover:grayscale-0">
-                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-end p-8 text-white">
-                                <h3 class="serif-en text-2xl font-bold mb-2">AUTORE</h3>
-                                <p class="text-xs opacity-90 mb-4 tracking-wider">最高峰の基準：サウスシーパールの頂点</p>
-                                <span class="text-[10px] uppercase tracking-[0.3em] flex items-center">Explore Details <span class="ml-2">→</span></span>
+                <div class="max-w-7xl mx-auto text-center">
+                    <h2 class="text-2xl md:text-3xl font-semibold mb-10 md:mb-16">Brand Portfolio Integration</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- AUTORE -->
+                        <div class="brand-card relative overflow-hidden group h-[300px] md:h-[500px]"
+                            onclick="goTo('brand-detail', null, 'autore')">
+                            <img src="autore.webp"
+                                class="brand-image w-full h-full object-cover grayscale group-hover:grayscale-0">
+                            <div
+                                class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-center items-center text-center p-8 text-white">
+                                <h3 class="serif-en text-2xl font-bold mb-2 uppercase">AUTORE</h3>
+                                <p class="text-xs opacity-90 mb-6 tracking-wider">最高峰の基準：サウスシーパールの頂点</p>
+                                <span
+                                    class="text-[10px] uppercase tracking-[0.3em] flex items-center justify-center border border-white/30 px-6 py-2 hover:bg-white hover:text-black transition duration-500">Explore
+                                    Details <span class="ml-2">→</span></span>
                             </div>
                         </div>
-
-                        <div class="brand-card relative overflow-hidden group h-[500px]" onclick="showBrandDetail('moda')">
-                            <img src="autore_moda.png" 
-                                 class="brand-image w-full h-full object-cover grayscale group-hover:grayscale-0">
-                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-end p-8 text-white">
-                                <h3 class="serif-en text-2xl font-bold mb-2">AUTORE MODA</h3>
-                                <p class="text-xs opacity-90 mb-4 tracking-wider">次世代への架け橋：アクセシブル・ラグジュアリー</p>
-                                <span class="text-[10px] uppercase tracking-[0.3em] flex items-center">Explore Details <span class="ml-2">→</span></span>
+                        <!-- AUTORE MODA -->
+                        <div class="brand-card relative overflow-hidden group h-[300px] md:h-[500px]"
+                            onclick="goTo('brand-detail', null, 'moda')">
+                            <img src="autore_moda.png"
+                                class="brand-image w-full h-full object-cover grayscale group-hover:grayscale-0">
+                            <div
+                                class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-center items-center text-center p-8 text-white">
+                                <h3 class="serif-en text-2xl font-bold mb-2 uppercase">AUTORE MODA</h3>
+                                <p class="text-xs opacity-90 mb-6 tracking-wider">次世代への架け橋：アクセシブル・ラグジュアリー</p>
+                                <span
+                                    class="text-[10px] uppercase tracking-[0.3em] flex items-center justify-center border border-white/30 px-6 py-2 hover:bg-white hover:text-black transition duration-500">Explore
+                                    Details <span class="ml-2">→</span></span>
                             </div>
                         </div>
                     </div>
@@ -289,15 +523,18 @@
             </section>
 
             <!-- 5. Closing -->
-            <section class="section-padding bg-[#0A192F] text-white text-center">
-                <div class="max-w-3xl mx-auto space-y-12">
+            <section class="section-padding bg-[var(--ocean-deep)] text-white text-center">
+                <div class="max-w-3xl mx-auto space-y-8 md:space-y-12">
                     <p class="serif-en text-gold-accent italic tracking-widest">Toward a Shared Future.</p>
-                    <h2 class="text-3xl font-semibold">共に、次の時代へ。</h2>
-                    <p class="text-sm opacity-70 leading-loose">我々は「権利」ではなく「責任」を胸に、世界最高峰の真珠が持つ気高き輝きを、日本の皆様へ誠実に届けてまいります。</p>
-                    <div class="pt-8">
+                    <h2 class="text-2xl md:text-3xl font-semibold">共に、次の時代へ。</h2>
+                    <p class="text-sm opacity-70 leading-loose px-4">
+                        我々は「権利」ではなく「責任」を胸に、世界最高峰の真珠が持つ気高き輝きを、日本の皆様へ誠実に届けてまいります。
+                    </p>
+                    <div class="pt-4 md:pt-8">
                         <div class="flex flex-col items-center">
-                            <p class="text-[10px] tracking-[0.4em] uppercase mb-4 opacity-50">Representing Hinata Pearl Project</p>
-                            <div class="signature text-4xl pb-2">Hinata Pearl Project CEO</div>
+                            <div class="signature text-3xl md:text-4xl pb-2">HINATA Autore Project CEO</div>
+                            <p class="text-[10px] tracking-[0.4em] uppercase mt-2 opacity-50">Powered by HINATA Trading
+                                Co., Ltd.</p>
                         </div>
                     </div>
                 </div>
@@ -309,12 +546,15 @@
     <div id="brand-detail" class="page">
         <div id="brand-content"></div>
         <div class="bg-white py-20 text-center">
-            <button onclick="showPage('home')" class="text-xs uppercase tracking-[0.5em] border border-gray-200 px-10 py-4 hover:bg-black hover:text-white transition">Back to Home</button>
+            <button onclick="goTo('home')"
+                class="text-xs uppercase tracking-[0.5em] border border-gray-200 px-10 py-4 hover:bg-black hover:text-white transition">Back
+                to Home</button>
         </div>
     </div>
 
-    <footer class="bg-black text-white/40 py-10 px-8 text-center text-[10px] tracking-[0.3em] uppercase">
-        <p>&copy; 2024 Hinata Pearl Project. Excellence in Stewardship.</p>
+    <footer
+        class="bg-black text-white/40 py-8 md:py-10 px-4 md:px-8 text-center text-[10px] tracking-[0.3em] uppercase leading-relaxed">
+        <p>&copy; 2024 Hinata Autore Project. Excellence in Stewardship.</p>
     </footer>
 
     <script>
@@ -323,30 +563,88 @@
                 title: "AUTORE",
                 subtitle: "The Pinnacle of South Sea Pearls",
                 jpSubtitle: "最高峰の基準：サウスシーパールの頂点",
-                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=2000",
-                url: "https://www.autorepearls.com.au/",
+                image: "autore.webp",
                 content: `
-                    <div class="grid md:grid-cols-2 gap-20 items-start">
-                        <div class="space-y-12">
-                            <div class="border-l-4 border-gold-accent pl-8">
-                                <h4 class="font-bold text-xl mb-4">Vertical Integration & Heritage</h4>
-                                <p class="text-gray-600 text-sm leading-loose">
-                                    1991年、ロザリオ・オートレによってシドニーで設立されたオートレ・グループの核心。比類なき透明性と品質を実現しています。
-                                </p>
+                    <div class="space-y-16 md:space-y-32">
+                        <!-- 1. エモーショナルな導入 -->
+                        <div class="max-w-4xl mx-auto text-center px-4 pt-8 md:pt-10">
+                            <h3 class="text-2xl md:text-3xl font-semibold mb-4 md:mb-6 text-[var(--ocean-deep)]">一生ものの輝きを、あなたに。</h3>
+                            <p class="text-gray-600 leading-loose text-sm md:text-base">
+                                オーストラリアの清らかな海が育んだ、奇跡のような大粒の南洋真珠。<br>
+                                AUTOREは、その一粒一粒が持つ個性を最大限に引き出し、<br class="hidden md:block">
+                                世代を超えて受け継がれる「真のラグジュアリー」をお届けします。
+                            </p>
+                        </div>
+
+                        <!-- 2. ブランドの強み・情緒的価値 -->
+                        <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center max-w-7xl mx-auto px-4">
+                            <div class="space-y-8 md:space-y-12">
+                                <div class="relative pl-8">
+                                    <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--gold-accent)]"></div>
+                                    <h4 class="font-bold text-xl mb-3 text-[var(--ocean-deep)]">海からアトリエへ、妥協なき品質</h4>
+                                    <p class="text-gray-600 text-sm leading-relaxed">
+                                        1991年の創業以来、真珠の養殖からデザイン、ジュエリーの制作に至るまで、すべての工程を自社で一貫して行っています。誰の手も介さず、私たちの目と手で直接確かめた「比類なき透明性と最高品質」だけをお客様にお約束します。
+                                    </p>
+                                </div>
+                                <div class="relative pl-8">
+                                    <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--gold-accent)]"></div>
+                                    <h4 class="font-bold text-xl mb-3 text-[var(--ocean-deep)]">世界が認めた芸術的デザイン</h4>
+                                    <p class="text-gray-600 text-sm leading-relaxed">
+                                        クリエイティブ・ディレクター、ジェーン・オートレ率いるチームが手掛けるジュエリーは、これまでに11もの国際的なデザイン賞を受賞。真珠の美しさを際立たせる、洗練された造形美をご堪能ください。
+                                    </p>
+                                </div>
                             </div>
-                            <div class="border-l-4 border-gold-accent pl-8">
-                                <h4 class="font-bold text-xl mb-4">Artistry & Recognition</h4>
-                                <p class="text-gray-600 text-sm leading-loose">
-                                    クリエイティブ・ディレクター、ジェーン・オートレ率いるチームは、これまでに11の国際的なデザイン賞を受賞しています。
+                            
+                            <!-- 3. CTA (Call To Action) - 購買意欲を喚起するボックス -->
+                            <div class="bg-[#F8F7F5] p-8 md:p-12 text-center shadow-sm">
+                                <span class="text-[var(--gold-accent)] text-xs tracking-widest uppercase mb-4 block">Official Boutique</span>
+                                <h4 class="font-bold text-2xl mb-4 md:mb-6 text-[var(--ocean-deep)]">珠玉のコレクションを見る</h4>
+                                <p class="text-gray-600 text-sm leading-loose mb-8">
+                                    特別な日を彩るハイジュエリーから、ご自身へのご褒美まで。<br>本国のオンラインブティックで、AUTOREの世界観をお楽しみください。
                                 </p>
+                                <a href="https://www.autorepearls.com.au/" target="_blank" class="inline-block bg-[var(--ocean-deep)] text-white text-xs tracking-widest uppercase px-10 py-4 hover:bg-[var(--gold-accent)] transition duration-300">
+                                    Visit Official Website
+                                </a>
                             </div>
                         </div>
-                        <div class="bg-[#F8F7F5] p-12">
-                            <h4 class="font-bold text-xl mb-6">Strategic Role in Japan</h4>
-                            <p class="text-gray-600 text-sm leading-loose mb-8">
-                                日本市場において、富裕層や愛好家に向けた「一生ものの資産」としての真珠価値を確立します。
-                            </p>
-                            <a href="https://www.autorepearls.com.au/" target="_blank" class="text-gold-accent serif-en italic text-lg border-b border-gold-accent">Visit Website: autorepearls.com.au</a>
+
+                        <!-- 4. Best Sellers Carousel -->
+                        <div class="bg-white py-20 border-t border-gray-100">
+                            <div class="max-w-7xl mx-auto px-4 text-center">
+                                <span class="text-[var(--gold-accent)] text-xs tracking-widest uppercase mb-2 block">Signature Collection</span>
+                                <h3 class="text-3xl mb-4 md:mb-6 text-[var(--ocean-deep)] font-semibold">ベストセラー</h3>
+                                <p class="max-w-2xl mx-auto text-sm text-gray-500 leading-loose mb-16">
+                                    AUTOREを象徴する、時を超えて愛され続ける珠玉のコレクション。<br class="hidden md:block">希少な南洋真珠と卓越したクラフツマンシップの融合をお楽しみください。
+                                </p>
+                                
+                                <div class="relative px-12 group">
+                                    <button onclick="scrollBrandCarousel(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-black transition z-10">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"/></svg>
+                                    </button>
+                                    <button onclick="scrollBrandCarousel(1)" class="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-black transition z-10">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"/></svg>
+                                    </button>
+
+                                    <div id="brand-carousel" class="carousel-container">
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800" class="best-seller-img" alt="Orchid">
+                                            <p class="serif-en text-lg mt-6">Orchid</p>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800" class="best-seller-img" alt="Hercules Knot">
+                                            <p class="serif-en text-lg mt-6">Hercules Knot</p>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&q=80&w=800" class="best-seller-img" alt="Pave">
+                                            <p class="serif-en text-lg mt-6">Pave</p>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800" class="best-seller-img" alt="Eternity">
+                                            <p class="serif-en text-lg mt-6">Eternity</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `
@@ -355,45 +653,145 @@
                 title: "AUTORE MODA",
                 subtitle: "Contemporary Elegance for the Next Generation",
                 jpSubtitle: "次世代への架け橋：アクセシブル・ラグジュアリー",
-                image: "https://images.unsplash.com/photo-1535633302703-b0703af48f18?auto=format&fit=crop&q=80&w=2000",
-                url: "https://autoremoda.com/",
+                image: "autore_moda.png",
                 content: `
-                    <div class="grid md:grid-cols-2 gap-20 items-start">
-                        <div class="space-y-12">
-                            <div class="border-l-4 border-gold-accent pl-8">
-                                <h4 class="font-bold text-xl mb-4">Accessible Luxury</h4>
-                                <p class="text-gray-600 text-sm leading-loose">
-                                    本物の南洋真珠を使用しながらも、日常的に楽しめる価格帯と自由なデザインを提案します。
-                                </p>
+                    <div class="space-y-16 md:space-y-32">
+                        <!-- 1. エモーショナルな導入 -->
+                        <div class="max-w-4xl mx-auto text-center px-4 pt-8 md:pt-10">
+                            <h3 class="text-2xl md:text-3xl font-semibold mb-4 md:mb-6 text-[var(--ocean-deep)]">本物の輝きを、もっと自由に。</h3>
+                            <p class="text-gray-600 leading-loose text-sm md:text-base">
+                                最高品質の南洋真珠を、Tシャツやデニムのような毎日の装いにも。<br>
+                                AUTORE MODAは、現代のライフスタイルに寄り添い、<br class="hidden md:block">
+                                あなたの日常をさりげなく格上げするデミファイン・ジュエリーです。
+                            </p>
+                        </div>
+
+                        <!-- 2. ブランドの強み・情緒的価値 -->
+                        <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center max-w-7xl mx-auto px-4">
+                            <div class="space-y-8 md:space-y-12">
+                                <div class="relative pl-8">
+                                    <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--gold-accent)]"></div>
+                                    <h4 class="font-bold text-xl mb-3 text-[var(--ocean-deep)]">日常に溶け込むラグジュアリー</h4>
+                                    <p class="text-gray-600 text-sm leading-relaxed">
+                                        AUTOREが誇る本物の南洋真珠を使用しながらも、手に取りやすい価格帯と、レイヤード（重ね付け）も楽しめる自由で軽やかなデザインを実現しました。初めての真珠としても最適です。
+                                    </p>
+                                </div>
+                                <div class="relative pl-8">
+                                    <div class="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--gold-accent)]"></div>
+                                    <h4 class="font-bold text-xl mb-3 text-[var(--ocean-deep)]">妥協のない品質と安心</h4>
+                                    <p class="text-gray-600 text-sm leading-relaxed">
+                                        ファッション性を追求する一方で、AUTOREの厳格な品質基準はそのまま受け継がれています。長く愛用していただくための品質保証も充実しており、安心してお選びいただけます。
+                                    </p>
+                                </div>
                             </div>
-                            <div class="border-l-4 border-gold-accent pl-8">
-                                <h4 class="font-bold text-xl mb-4">Targeted Growth</h4>
-                                <p class="text-gray-600 text-sm leading-loose">
-                                    ミレニアル世代やZ世代など、新しい層へリーチすることで、将来の顧客層を育成します。
+                            
+                            <!-- 3. CTA (Call To Action) -->
+                            <div class="bg-[#F8F7F5] p-8 md:p-12 text-center shadow-sm">
+                                <span class="text-[var(--gold-accent)] text-xs tracking-widest uppercase mb-4 block">Online Store</span>
+                                <h4 class="font-bold text-2xl mb-4 md:mb-6 text-[var(--ocean-deep)]">お気に入りの一粒を見つける</h4>
+                                <p class="text-gray-600 text-sm leading-loose mb-8">
+                                    トレンドを取り入れた新作から、タイムレスな定番アイテムまで。<br>あなたの毎日を輝かせるジュエリーが、きっと見つかります。
                                 </p>
+                                <a href="https://autoremoda.com/" target="_blank" class="inline-block bg-[var(--ocean-deep)] text-white text-xs tracking-widest uppercase px-10 py-4 hover:bg-[var(--gold-accent)] transition duration-300">
+                                    Shop Collection
+                                </a>
                             </div>
                         </div>
-                        <div class="bg-[#F8F7F5] p-12">
-                            <h4 class="font-bold text-xl mb-6">Quality & Reliability</h4>
-                            <p class="text-gray-600 text-sm leading-loose mb-8">
-                                ファッション性が高い一方で、オートレ基準の品質保証を維持しています。
-                            </p>
-                            <a href="https://autoremoda.com/" target="_blank" class="text-gold-accent serif-en italic text-lg border-b border-gold-accent">Visit Website: autoremoda.com</a>
+
+                        <!-- 4. Product Showcase -->
+                        <div class="bg-white py-20 border-t border-gray-100">
+                            <div class="max-w-7xl mx-auto px-4">
+                                <div class="text-center mb-16">
+                                    <span class="text-[var(--gold-accent)] text-xs tracking-widest uppercase mb-2 block">Latest Arrivals</span>
+                                    <h3 class="text-3xl mb-4 text-[var(--ocean-deep)] font-semibold">注目のコレクション</h3>
+                                    <p class="text-sm text-gray-500">毎日のスタイリングを彩る、最新のアイテムをご紹介します。</p>
+                                </div>
+
+                                <div class="flex justify-between items-end mb-12 border-b border-gray-100 pb-4">
+                                    <div class="flex items-center gap-4">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                                        <span class="text-xs uppercase tracking-widest font-semibold">Filter</span>
+                                    </div>
+                                    <span class="text-[11px] text-gray-400 uppercase tracking-widest font-semibold">81 products</span>
+                                    <div class="flex gap-2">
+                                        <div class="w-4 h-4 border border-black"></div>
+                                        <div class="w-4 h-4 border border-gray-200"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-16">
+                                    <div class="product-grid-item text-center">
+                                        <div class="relative aspect-square bg-[#F6F6F6] mb-6 overflow-hidden flex items-center justify-center">
+                                            <span class="absolute top-4 left-4 bg-white px-2 py-1 text-[9px] font-bold tracking-widest uppercase shadow-sm">New</span>
+                                            <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800" class="w-4/5 h-4/5 object-contain mix-blend-multiply" alt="Necklace">
+                                        </div>
+                                        <h5 class="text-[13px] leading-relaxed mb-1 px-4">Keshi & Pink Tourmaline Necklace</h5>
+                                        <p class="text-[12px] text-gray-500 font-light">¥456,800</p>
+                                    </div>
+                                    <div class="product-grid-item text-center">
+                                        <div class="relative aspect-square bg-[#F6F6F6] mb-6 overflow-hidden flex items-center justify-center">
+                                            <span class="absolute top-4 left-4 bg-white px-2 py-1 text-[9px] font-bold tracking-widest uppercase shadow-sm">New</span>
+                                            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800" class="w-4/5 h-4/5 object-contain mix-blend-multiply opacity-60" alt="Bracelet">
+                                        </div>
+                                        <h5 class="text-[13px] leading-relaxed mb-1 px-4">South Sea Round Pearl Bracelet</h5>
+                                        <p class="text-[12px] text-gray-500 font-light mb-4">¥229,200 <span class="ml-1 italic text-gray-400">Sold out</span></p>
+                                        <button class="text-[10px] uppercase tracking-[0.2em] font-bold border-b border-black pb-0.5 hover:text-gold-accent hover:border-gold-accent transition">Notify Me</button>
+                                    </div>
+                                    <div class="product-grid-item text-center">
+                                        <div class="relative aspect-square bg-[#F6F6F6] mb-6 overflow-hidden flex items-center justify-center">
+                                            <img src="https://images.unsplash.com/photo-1603912627214-1013a88b393e?auto=format&fit=crop&q=80&w=800" class="w-4/5 h-4/5 object-contain mix-blend-multiply" alt="Satin Bracelet">
+                                        </div>
+                                        <h5 class="text-[13px] leading-relaxed mb-1 px-4">Red Satin Bracelet</h5>
+                                        <p class="text-[12px] text-gray-500 font-light">From ¥15,300</p>
+                                    </div>
+                                    <div class="product-grid-item text-center">
+                                        <div class="relative aspect-square bg-[#F6F6F6] mb-6 overflow-hidden flex items-center justify-center">
+                                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800" class="w-4/5 h-4/5 object-contain mix-blend-multiply" alt="Melanie Ring">
+                                        </div>
+                                        <h5 class="text-[13px] leading-relaxed mb-1 px-4">Melanie Ring</h5>
+                                        <p class="text-[12px] text-gray-500 font-light">¥48,900</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `
             },
         };
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        /**
+         * ページ切り替えの基本ロジック
+         */
+        function showPage(pageId, pushHistory = true) {
             const activePage = document.getElementById(pageId);
+            if (!activePage) return;
+
+            const isPageChanging = !activePage.classList.contains('active');
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             activePage.classList.add('active');
-            window.scrollTo(0, 0);
+
+            // ページが切り替わった場合のみスクロール位置を一番上にする
+            if (isPageChanging) {
+                window.scrollTo(0, 0);
+            }
+
+            if (pushHistory) {
+                const newHash = "#!/" + pageId;
+                // 不要な重複履歴を防ぐ
+                if (window.location.hash !== newHash && !window.location.hash.startsWith(newHash + '/')) {
+                    history.pushState({ pageId: pageId, brandKey: null }, "", newHash);
+                }
+            }
         }
 
-        function showBrandDetail(brandKey) {
+        /**
+         * ブランド詳細のレンダリング
+         */
+        function showBrandDetail(brandKey, pushHistory = true) {
             const data = brandData[brandKey];
+            if (!data) return;
+
             const content = `
                 <header class="brand-detail-header" style="background-image: url('${data.image}')">
                     <div class="relative z-10 text-center text-white px-4">
@@ -402,12 +800,108 @@
                         <p class="text-sm opacity-80 tracking-widest">${data.jpSubtitle}</p>
                     </div>
                 </header>
-                <section class="section-padding bg-white max-w-7xl mx-auto">
+                <section class="section-padding bg-white">
                     ${data.content}
                 </section>
             `;
             document.getElementById('brand-content').innerHTML = content;
-            showPage('brand-detail');
+
+            const isPageChanging = !document.getElementById('brand-detail').classList.contains('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('brand-detail').classList.add('active');
+
+            if (isPageChanging) {
+                window.scrollTo(0, 0);
+            }
+
+            if (pushHistory) {
+                const newHash = "#!/brand-detail/" + brandKey;
+                if (window.location.hash !== newHash) {
+                    history.pushState({ pageId: 'brand-detail', brandKey: brandKey }, "", newHash);
+                }
+            }
+        }
+
+        /**
+         * 履歴に追加してページ遷移する (クリック用)
+         */
+        function goTo(pageId, sectionId = null, brandKey = null) {
+            const currentState = history.state || {};
+            // 状態が変わる場合のみ pushState を行う
+            if (currentState.pageId !== pageId || currentState.brandKey !== brandKey) {
+                let hash = "#!/" + pageId;
+                if (brandKey) hash += "/" + brandKey;
+                history.pushState({ pageId, brandKey }, "", hash);
+
+                if (pageId === 'brand-detail') {
+                    showBrandDetail(brandKey, false);
+                } else {
+                    showPage(pageId, false);
+                }
+            }
+
+            // セクションへのスクロール指定がある場合
+            if (sectionId) {
+                setTimeout(() => {
+                    const el = document.getElementById(sectionId);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
+            }
+        }
+
+        /**
+         * ブラウザの「戻る」「進む」ボタンに対応するイベントリスナー
+         */
+        window.onpopstate = function (event) {
+            if (event.state) {
+                if (event.state.pageId === 'brand-detail') {
+                    showBrandDetail(event.state.brandKey, false);
+                } else {
+                    showPage(event.state.pageId, false);
+                }
+            } else {
+                showPage('home', false);
+            }
+        };
+
+        // 初期状態のURL履歴を保存 (リロード対策)
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            let initPage = 'home';
+            let initBrand = null;
+
+            // URLハッシュから状態を復元
+            if (hash.startsWith('#!/')) {
+                const parts = hash.substring(3).split('/');
+                initPage = parts[0] || 'home';
+                if (parts[1]) initBrand = parts[1];
+            }
+
+            // 初期状態をreplaceStateで履歴にセット
+            if (initPage === 'brand-detail' && initBrand) {
+                showBrandDetail(initBrand, false);
+                history.replaceState({ pageId: 'brand-detail', brandKey: initBrand }, "", hash);
+            } else {
+                showPage(initPage, false);
+                history.replaceState({ pageId: initPage, brandKey: null }, "", hash || "#!/home");
+            }
+        });
+
+        function scrollBrandCarousel(dir) {
+            const carousel = document.getElementById('brand-carousel');
+            if (carousel) {
+                const scrollStep = carousel.clientWidth / (window.innerWidth < 640 ? 1 : (window.innerWidth < 1024 ? 2 : 4));
+                carousel.scrollBy({ left: dir * scrollStep, behavior: 'smooth' });
+            }
+        }
+
+        // Autorenability Initiativesのカルーセル操作用関数
+        function scrollSustainabilityCarousel(dir) {
+            const carousel = document.getElementById('sustainability-carousel');
+            if (carousel) {
+                const scrollStep = carousel.clientWidth / (window.innerWidth < 640 ? 1 : (window.innerWidth < 1024 ? 2 : 4));
+                carousel.scrollBy({ left: dir * scrollStep, behavior: 'smooth' });
+            }
         }
 
         const observer = new IntersectionObserver((entries) => {
@@ -422,4 +916,5 @@
         });
     </script>
 </body>
+
 </html>
