@@ -78,6 +78,37 @@
             border-bottom: 1px solid var(--gold-accent);
         }
 
+        .brand-detail-logo {
+            max-width: min(100vw, 1200px);
+            margin: 0 auto 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .brand-detail-logo img {
+            width: auto;
+            height: auto;
+            display: block;
+            filter: brightness(0) invert(1);
+            max-width: 100%;
+        }
+
+        .brand-portfolio-logo {
+            max-width: 200px;
+            height: auto;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .brand-portfolio-logo img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            filter: brightness(0) invert(1);
+        }
+
         .page {
             display: none;
             opacity: 0;
@@ -180,8 +211,6 @@
         <div class="text-xl font-semibold tracking-widest serif-en uppercase cursor-pointer" onclick="showPage('home')">
            HINATA AUTORE</div>
         <div class="hidden md:flex space-x-12 text-sm tracking-widest uppercase">
-            <a href="#manifesto" class="hover:text-gold-accent transition" onclick="showPage('home')">Manifesto</a>
-            <a href="#portfolio" class="hover:text-gold-accent transition" onclick="showPage('home')">Portfolio</a>
         </div>
     </nav>
 
@@ -522,6 +551,21 @@
                 </div>
             </section>
 
+            <!-- 4. Contact Section -->
+            <section id="contact" class="section-padding bg-[#F8F7F5]">
+                <div class="max-w-7xl mx-auto text-center">
+                    <span class="text-gold-accent tracking-widest uppercase text-sm font-semibold">Contact</span>
+                    <h2 class="text-2xl md:text-3xl font-semibold mt-4 mb-4">お問い合わせ</h2>
+                    <p class="text-gray-700 max-w-2xl mx-auto text-sm md:text-base leading-relaxed mb-8">
+                        AUTOREについてのご質問、ご相談、商品についてのお問い合わせなど<br>お気軽にご連絡ください。
+                    </p>
+                    <a href="https://www.hinatatrading.com/contact" target="_blank" rel="noopener noreferrer"
+                        class="inline-block bg-[var(--ocean-deep)] text-white uppercase tracking-[0.3em] px-10 py-4 text-sm hover:bg-[var(--gold-accent)] transition">
+                        お問い合わせページへ
+                    </a>
+                </div>
+            </section>
+
             <!-- 5. Closing -->
             <section class="section-padding bg-[var(--ocean-deep)] text-white text-center">
                 <div class="max-w-3xl mx-auto space-y-8 md:space-y-12">
@@ -564,6 +608,7 @@
                 subtitle: "The Pinnacle of South Sea Pearls",
                 jpSubtitle: "最高峰の基準：サウスシーパールの頂点",
                 image: "autore.webp",
+                logo: "autorelogo.avif",
                 content: `
                     <div class="space-y-16 md:space-y-32">
                         <!-- 1. エモーショナルな導入 -->
@@ -654,6 +699,7 @@
                 subtitle: "Contemporary Elegance for the Next Generation",
                 jpSubtitle: "次世代への架け橋：アクセシブル・ラグジュアリー",
                 image: "autore_moda.png",
+                logo: "autore_moda_logo.avif",
                 content: `
                     <div class="space-y-32">
                         <!-- 1. エモーショナルな導入 -->
@@ -786,11 +832,15 @@
             const data = brandData[brandKey];
             if (!data) return;
 
+            const titleContent = data.logo 
+                ? `<div class="brand-detail-logo"><img src="${data.logo}" alt="${data.title} logo" /></div>`
+                : `<h2 class="text-4xl md:text-6xl font-bold tracking-widest uppercase mb-4">${data.title}</h2>`;
+
             const content = `
                 <header class="brand-detail-header" style="background-image: url('${data.image}')">
                     <div class="relative z-10 text-center text-white px-4">
                         <p class="serif-en text-lg tracking-[0.3em] mb-4">${data.subtitle}</p>
-                        <h2 class="text-4xl md:text-6xl font-bold tracking-widest uppercase mb-4">${data.title}</h2>
+                        ${titleContent}
                         <p class="text-sm opacity-80 tracking-widest">${data.jpSubtitle}</p>
                     </div>
                 </header>
